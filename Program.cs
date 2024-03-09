@@ -8,6 +8,7 @@
 //Зробити властивості класу приватними, а для їх читання створити методи-геттери.
 
 using System;
+using System.Numerics;
 
 public class Matrix
 {
@@ -22,10 +23,45 @@ public class Matrix
         this.countColum = elements.GetLength(1);
     }
 
-
-    public static Matrix Sum(Matrix matrix1,Matrix matrix2)
+    public static Matrix MatrixMultipByNumb(int n,Matrix matrix)
     {
-        CheckSize(matrix1, matrix2);
+        int[,] result = new int[matrix.GetLineCount(), matrix.GetColumnCount()];
+       for (int i = 0; i < result.GetLength(0); i++)
+       {
+            for (int j = 0; j < result.GetLength(1); j++)
+            {
+                result[i, j] = n * matrix.GetElement(i,j);
+            }
+       }
+       return new Matrix(result);
+    }
+    public static Matrix MultiplyTwoMatrix(Matrix matrix1, Matrix matrix2)
+    {
+        if (matrix1.GetColumnCount() != matrix2.GetLineCount())
+        {
+            throw new ArgumentException("Кількість стовпців першої матриці повинна бути рівною кількості рядків другої матриці.");
+        }
+
+        int[,] result = new int[matrix1.GetLineCount(), matrix2.GetColumnCount()];
+
+        for (int i = 0; i < matrix1.GetLineCount(); i++)
+        {
+            for (int j = 0; j < matrix2.GetColumnCount(); j++)
+            {
+                int sum = 0;
+                for (int k = 0; k < matrix1.GetColumnCount(); k++)
+                {
+                    sum += matrix1.GetElement(i, k) * matrix2.GetElement(k, j);
+                }
+                result[i, j] = sum;  
+            }
+        }
+        return new Matrix(result);  
+    }
+
+public static Matrix Sum(Matrix matrix1,Matrix matrix2)
+    {
+        CheckSizeTwoMatrix(matrix1, matrix2);
 
         int[,] result = new int[matrix1.GetLineCount(),matrix1.GetColumnCount()];
         for (int i = 0; i < matrix1.GetLineCount(); i++)
@@ -37,7 +73,21 @@ public class Matrix
         }
         return new Matrix(result);
     }
-    public static void CheckSize(Matrix matrix1, Matrix matrix2)
+    public static Matrix Difference(Matrix matrix1, Matrix matrix2)
+    {
+        CheckSizeTwoMatrix(matrix1, matrix2);
+
+        int[,] result = new int[matrix1.GetLineCount(), matrix1.GetColumnCount()];
+        for (int i = 0; i < matrix1.GetLineCount(); i++)
+        {
+            for (int j = 0; j < matrix1.GetColumnCount(); j++)
+            {
+                result[i, j] = matrix1.GetElement(i, j) - matrix2.GetElement(i, j);
+            }
+        }
+        return new Matrix(result);
+    }
+    public static void CheckSizeTwoMatrix(Matrix matrix1, Matrix matrix2)
     {
         if (matrix1.GetLineCount() != matrix2.GetLineCount() || matrix1.GetColumnCount() != matrix2.GetColumnCount())
         {
@@ -83,13 +133,35 @@ class Programm
 
         Console.WriteLine("Кiлькiсть рядкiв матрицi: " + matrix1.GetLineCount());
         Console.WriteLine("Кiлькiсть стовпцiв матрицi: " + matrix1.GetColumnCount());
+        Console.WriteLine("Матрицi ");
+        Console.WriteLine(" Matrix 1 ");
+        Matrix.Print(matrix1);
+
+        Console.WriteLine("Matrix 2 ");
+        Matrix.Print(matrix2);
+
+
 
         Matrix sumMatrix = Matrix.Sum(matrix1, matrix2);
 
-        Console.WriteLine("Сума матриць:");
+        Console.WriteLine("Сума матриць(1+2):");
         Matrix.Print(sumMatrix); 
 
-    
+        Matrix difMatrix = Matrix.Difference(matrix1, matrix2);
+
+        Console.WriteLine("Рiзниця матриць(1-2): ");
+        Matrix.Print(difMatrix);
+
+        Matrix multiplyMatrix= Matrix.MultiplyTwoMatrix(matrix1, matrix2);
+
+        Console.WriteLine("Множення матриць(1*2): ");
+        Matrix.Print(multiplyMatrix);
+
+        Matrix multiplyMatrixNumb = Matrix.MatrixMultipByNumb(4,matrix1);
+
+        Console.WriteLine("Множення матрицi(matrix1*4): ");
+        Matrix.Print(multiplyMatrixNumb);
+
     }
    
 }
