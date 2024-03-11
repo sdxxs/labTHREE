@@ -22,9 +22,55 @@ public class Matrix
         this.countLine = elements.GetLength(0);
         this.countColum = elements.GetLength(1);
     }
-
-    public static Matrix MatrixMultipByNumb(int n,Matrix matrix)
+    public static bool Symmetry(Matrix matrix)
     {
+        if (!isSquare(matrix))
+        {
+        throw new ArgumentException("Матриця не квадратна.");
+        }     
+            for (int i = 0; i < matrix.GetLineCount(); i++)
+            {
+                for(int j=0; j < i; j++)
+                {
+                    if (matrix.GetElement(i, j) != matrix.GetElement(j, i)) return false;
+                }
+            }
+            return true;    
+    }
+
+    public static Matrix Trasposicion(Matrix matrix)
+    {
+        int[,] result = new int[matrix.GetColumnCount(),matrix.GetLineCount()];
+        for (int i = 0; i < matrix.GetLineCount(); i++)
+        {
+            for (int j = 0; j < matrix.GetColumnCount(); j++)
+            {
+                result[j,i]=matrix.GetElement(i,j);
+            }
+        }
+        return new Matrix(result);
+    }
+    public static bool isSquare(Matrix matrix)
+    {
+        if(matrix.GetColumnCount() == matrix.GetLineCount()) return true;
+        return false;
+    }
+    public static bool areEqual(Matrix matrix1, Matrix matrix2)
+    {      
+        if (matrix1.GetColumnCount() != matrix2.GetColumnCount() || matrix1.GetLineCount() != matrix2.GetLineCount())
+            return false;
+        for (int i = 0;i< matrix1.GetLineCount(); i++)
+        {
+            for (int j = 0;j< matrix1.GetColumnCount(); j++)
+            {
+                if (matrix1.GetElement(i, j) != matrix2.GetElement(i, j))  return false;
+
+            }
+        }
+        return true;
+    }
+    public static Matrix MatrixMultipByNumb(int n,Matrix matrix)
+    { 
         int[,] result = new int[matrix.GetLineCount(), matrix.GetColumnCount()];
        for (int i = 0; i < result.GetLength(0); i++)
        {
@@ -62,7 +108,7 @@ public class Matrix
 public static Matrix Sum(Matrix matrix1,Matrix matrix2)
     {
         CheckSizeTwoMatrix(matrix1, matrix2);
-
+        
         int[,] result = new int[matrix1.GetLineCount(),matrix1.GetColumnCount()];
         for (int i = 0; i < matrix1.GetLineCount(); i++)
         {
@@ -87,11 +133,11 @@ public static Matrix Sum(Matrix matrix1,Matrix matrix2)
         }
         return new Matrix(result);
     }
-    public static void CheckSizeTwoMatrix(Matrix matrix1, Matrix matrix2)
+    private static void CheckSizeTwoMatrix(Matrix matrix1, Matrix matrix2)
     {
         if (matrix1.GetLineCount() != matrix2.GetLineCount() || matrix1.GetColumnCount() != matrix2.GetColumnCount())
         {
-            throw new ArgumentException("Розміри матриць повинні бути однакові для виконання операції додавання.");
+            throw new ArgumentException("Розміри матриць повинні бути однакові для виконання операції.");
         }
     }
     public static void Print(Matrix matrix)
@@ -128,11 +174,17 @@ class Programm
 
         int[,] matrix2Elements = { { 1, 2, 3 }, { 4, 5, 6 }, { 7, 8, 9 } };
 
+        int[,] matrix3Elements = { { 1, 2, 3 }, { 1, 2, 3 }, {1, 2, 3 } };
+
+        int[,] matrix4Elements = { { 1, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } };
+
         Matrix matrix1 = new Matrix(matrix1Elements);
         Matrix matrix2 = new Matrix(matrix2Elements);
+        Matrix matrix3 = new Matrix(matrix3Elements);
+        Matrix matrix4 = new Matrix(matrix4Elements);
 
-        Console.WriteLine("Кiлькiсть рядкiв матрицi: " + matrix1.GetLineCount());
-        Console.WriteLine("Кiлькiсть стовпцiв матрицi: " + matrix1.GetColumnCount());
+        Console.WriteLine("Кiлькiсть рядкiв matrix1: " + matrix1.GetLineCount());
+        Console.WriteLine("Кiлькiсть стовпцiв matrix1: " + matrix1.GetColumnCount());
         Console.WriteLine("Матрицi ");
         Console.WriteLine(" Matrix 1 ");
         Matrix.Print(matrix1);
@@ -140,27 +192,51 @@ class Programm
         Console.WriteLine("Matrix 2 ");
         Matrix.Print(matrix2);
 
+        Console.WriteLine("Matrix 3 ");
+        Matrix.Print(matrix3);
 
 
-        Matrix sumMatrix = Matrix.Sum(matrix1, matrix2);
+        Console.WriteLine("Matrix 4 ");
+        Matrix.Print(matrix4);
 
+        Matrix sumMatrix12 = Matrix.Sum(matrix1, matrix2);
         Console.WriteLine("Сума матриць(1+2):");
-        Matrix.Print(sumMatrix); 
+        Matrix.Print(sumMatrix12); 
 
-        Matrix difMatrix = Matrix.Difference(matrix1, matrix2);
 
+        Matrix difMatrix12 = Matrix.Difference(matrix1, matrix2);
         Console.WriteLine("Рiзниця матриць(1-2): ");
-        Matrix.Print(difMatrix);
+        Matrix.Print(difMatrix12);
+
 
         Matrix multiplyMatrix= Matrix.MultiplyTwoMatrix(matrix1, matrix2);
-
         Console.WriteLine("Множення матриць(1*2): ");
         Matrix.Print(multiplyMatrix);
 
-        Matrix multiplyMatrixNumb = Matrix.MatrixMultipByNumb(4,matrix1);
 
+        Matrix multiplyMatrixNumb = Matrix.MatrixMultipByNumb(4,matrix1);
         Console.WriteLine("Множення матрицi(matrix1*4): ");
         Matrix.Print(multiplyMatrixNumb);
+
+
+        bool Equal12=Matrix.areEqual(matrix1, matrix2);
+        Console.WriteLine("Перевiрка рiвностi matrix1==matrix2 : "+ Equal12);
+
+
+        bool Square1 = Matrix.isSquare(matrix1);
+        Console.WriteLine("Чи є матриця квадратною matrix1 : " + Square1);
+
+
+        Matrix TranspMatrix1 = Matrix.Trasposicion(matrix2);
+        Console.WriteLine("Транспонована матриця(matrix1): ");
+        Matrix.Print(TranspMatrix1);
+
+
+        bool Symmetry1 =Matrix.Symmetry(matrix1);
+        Console.WriteLine("Перевiрка cимметрiї matrix1 : " + Symmetry1);
+
+        bool Symmetry3 = Matrix.Symmetry(matrix3);
+        Console.WriteLine("Перевiрка cимметрiї matrix3 : " + Symmetry3);
 
     }
    
