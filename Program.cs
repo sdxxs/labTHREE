@@ -10,47 +10,60 @@
 using System;
 using System.Numerics;
 using System.Reflection.Metadata;
-using System.Text.Json;
-using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 
 public class Matrix
 {
     private int[,] elements;
 
+    public int[,] Elements
+    {
+        get { return elements; }
+        set { elements = value; }
+    }
+
     private int countLine;
     public int CountLine
     {
         get { return countLine; } 
+        set { countLine = value; }
     }
 
     private int countColum;
     public int CountColum
     {
         get { return countColum; }
+       set { countColum = value; }
     }
 
-    public Matrix(int[,] elements)
+    public Matrix(int[,] Elements)
     {
-        this.elements = elements;
-        this.countLine = elements.GetLength(0);
-        this.countColum = elements.GetLength(1);
+        this.Elements = Elements;
+        CountLine = Elements.GetLength(0);
+        CountColum = Elements.GetLength(1);
     }
     public int GetElement(int line, int column)
     {
         return elements[line, column];
     }
 
-    public static void SaveToJsonFile(string fileName,Matrix matrix)
+
+    public static void SaveToJsonFile(Matrix matrix)
     {
-        string json = JsonSerializer.Serialize(matrix);
+        string fileName = @"C:\Users\sarab\Desktop\прогв\labTHREE\forjyson.txt";
+        var json = JsonConvert.SerializeObject(matrix);
+        Console.WriteLine(json);
+
         File.WriteAllText(fileName, json);
         Console.WriteLine($"Об'єкт класу збережено у файл {fileName}");
     }
 
-    public static Matrix LoadFromJsonFile(string fileName)
+
+    public static Matrix LoadFromJsonFile()
     {
+        string fileName = @"C:\Users\sarab\Desktop\прогв\labTHREE\forjyson.txt";
         string json = File.ReadAllText(fileName);
-        Matrix jsonMatr= JsonSerializer.Deserialize<Matrix>(json);
+        Matrix jsonMatr = JsonConvert.DeserializeObject<Matrix>(json);
         return jsonMatr;
     }
 
@@ -262,7 +275,15 @@ class Programm
 
         bool Symmetry3 = Matrix.Symmetry(matrix3);
         Console.WriteLine("Перевiрка cимметрiї matrix3 : " + Symmetry3);
-        
+
+        Console.WriteLine();
+        Console.WriteLine("matrix4 в json форматi");
+        Matrix.SaveToJsonFile(matrix4);
+
+        Console.WriteLine("Десерелiзована matrix4 з файлу");
+
+        Matrix Matrix1FromFile=Matrix.LoadFromJsonFile();
+        Matrix.Print(Matrix1FromFile);
     }
    
 }
